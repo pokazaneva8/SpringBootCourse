@@ -67,15 +67,10 @@ public class MyController {
         }
 
         try {
-            /*Date timeRequest = DateTimeUtil.getCustomFormat().parse(request.getSystemTime());
+            Date timeRequest = DateTimeUtil.getCustomFormat().parse(request.getSystemTime());
             Date timeNow = new Date();
             var timeDiff = ((timeNow.getTime() - timeRequest.getTime()) / 1000.0);
-            log.info(String.valueOf(timeNow.getTime()));
-            log.info(String.valueOf(timeRequest.getTime()));
-            log.info("Time diff between requests (s): {}", timeDiff);*/
-            Date requestDate = DateTimeUtil.getCustomFormat().parse(request.getSystemTime());
-            Date now = new Date();
-            log.info("elapsed time: " + ((now.getTime() - requestDate.getTime()) / 1000.0) + " seconds");
+            log.info("Time diff between requests (s): {}", timeDiff);
         } catch (ParseException k) {
             log.error("Time parse exception \"{}\" occurred for request {}", k.getMessage(), request);
         }
