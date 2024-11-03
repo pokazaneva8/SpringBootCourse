@@ -2,14 +2,13 @@ package ru.pokazaneva.MySecondAppSpringBoot.model;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum Systems {
-    ERP("Enterprise Resource Planning"),
-    CRM("Customer Relationship Management"),
-    WMS("Warehouse Management System"),
-    SERVICE_1("Service 1");
+public enum Codes {
+
+    SUCCESS("success"),
+    FAILED("failed");
 
     private final String name;
-    Systems(String name){
+    Codes(String name){
         this.name = name;
     }
     @JsonValue

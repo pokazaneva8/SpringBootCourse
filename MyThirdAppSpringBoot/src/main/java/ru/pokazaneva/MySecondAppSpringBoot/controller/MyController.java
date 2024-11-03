@@ -12,31 +12,29 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.pokazaneva.MySecondAppSpringBoot.exception.UnsupportedCodeException;
 import ru.pokazaneva.MySecondAppSpringBoot.exception.ValidationFailedException;
 import ru.pokazaneva.MySecondAppSpringBoot.model.*;
-import ru.pokazaneva.MySecondAppSpringBoot.service.ModifyRequestService;
 import ru.pokazaneva.MySecondAppSpringBoot.service.ModifyResponseService;
 import ru.pokazaneva.MySecondAppSpringBoot.service.ValidationService;
 import ru.pokazaneva.MySecondAppSpringBoot.util.DateTimeUtil;
+
+import java.text.ParseException;
 import java.util.Date;
 @Slf4j
 @RestController
 public class MyController {
     private final ValidationService validationService;
     private final ModifyResponseService modifyResponseService;
-    private final ModifyRequestService modifyRequestService;
     @Autowired
     public MyController(ValidationService validationService,
                         @Qualifier("ModifySystemTimeResponseService")
-                        ModifyResponseService modifyResponseService,
-                        @Qualifier("ModifyPackageRequestService")
-                        ModifyRequestService modifyRequestService){
+                        ModifyResponseService modifyResponseService){
         this.validationService = validationService;
         this.modifyResponseService = modifyResponseService;
-        this.modifyRequestService = modifyRequestService;
     }
     @PostMapping(value = "/feedback")
     public ResponseEntity<Response> feedback(@Valid @RequestBody Request request,
                                              BindingResult bindingResult){
         log.info("request: {}", request);
+
         Response response = Response.builder()
                 .uid(request.getUid())
                 .operationUid(request.getOperationUid())
@@ -67,8 +65,22 @@ public class MyController {
            log.info("response error data: {}", response);
            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+
+        try {
+            /*Date timeRequest = DateTimeUtil.getCustomFormat().parse(request.getSystemTime());
+            Date timeNow = new Date();
+            var timeDiff = ((timeNow.getTime() - timeRequest.getTime()) / 1000.0);
+            log.info(String.valueOf(timeNow.getTime()));
+            log.info(String.valueOf(timeRequest.getTime()));
+            log.info("Time diff between requests (s): {}", timeDiff);*/
+            Date requestDate = DateTimeUtil.getCustomFormat().parse(request.getSystemTime());
+            Date now = new Date();
+            log.info("elapsed time: " + ((now.getTime() - requestDate.getTime()) / 1000.0) + " seconds");
+        } catch (ParseException k) {
+            log.error("Time parse exception \"{}\" occurred for request {}", k.getMessage(), request);
+        }
+
         modifyResponseService.modify(response);
-        modifyRequestService.modify(request);
         log.info("final response: {}", response);
         return new ResponseEntity<>(modifyResponseService.modify(response), HttpStatus.OK);
     }
